@@ -36,4 +36,7 @@ class Machine {
   swcb_sym_t callback_trace;
   Stream* stream_trace;
   uint32_t cycles;
+
+  void pinMode(uint8_t pin, PinMode mode);
+  PinStatus digitalRead(uint8_t pin);
 };

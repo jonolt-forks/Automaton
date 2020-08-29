@@ -253,3 +253,11 @@ Machine& Machine::cycle( uint32_t time /* = 0 */ ) {
   } while ( millis() - cycle_start < time );
   return *this;
 }
+
+void Machine::pinMode(uint8_t pin, PinMode mode){
+    pinMode(pin, mode);
+}
+
+PinStatus Machine::digitalRead(uint8_t pin){
+    return digitalRead(pin);
+}

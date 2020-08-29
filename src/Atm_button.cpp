@@ -12,7 +12,7 @@ Atm_button& Atm_button::begin( int attached_pin ) {
     /* PRESSED  */     ENT_PRESS,      -1,           -1,        -1,        -1,    REPEAT,         -1,       -1,     RELEASE,          -1,        -1,    -1,
     /* REPEAT   */     ENT_PRESS,      -1,           -1,        -1,        -1,        -1,     REPEAT,       -1,     RELEASE,          -1,        -1,    -1,
     /* RELEASE  */   ENT_RELEASE,      -1,           -1,        -1,        -1,        -1,         -1,       -1,          -1,          -1,        -1,  IDLE,
-    /* Long Press Mode: press/long press */	
+    /* Long Press Mode: press/long press */
     /* LIDLE    */            -1,      -1,           -1,        -1,        -1,        -1,         -1,    LWAIT,          -1,          -1,        -1,    -1,
     /* LWAIT    */    ENT_LSTART,      -1,           -1,        -1,  LPRESSED,        -1,         -1,       -1,       LIDLE,          -1,        -1,    -1,
     /* LPRESSED */    ENT_LCOUNT,      -1,           -1,        -1,        -1,  LPRESSED,         -1,       -1,    LRELEASE,    WRELEASE,        -1,    -1,
@@ -28,7 +28,7 @@ Atm_button& Atm_button::begin( int attached_pin ) {
   timer_delay.set( ATM_TIMER_OFF );
   timer_repeat.set( ATM_TIMER_OFF );
   timer_auto.set( ATM_TIMER_OFF );
-  pinMode( pin, INPUT_PULLUP );
+  Atm_button::pinMode( pin, INPUT_PULLUP );
   return *this;
 }
 
@@ -45,9 +45,9 @@ int Atm_button::event( int id ) {
     case EVT_AUTO:
       return timer_auto.expired( this );
     case EVT_PRESS:
-      return !digitalRead( pin );
+      return !Atm_button::digitalRead( pin );
     case EVT_RELEASE:
-      return digitalRead( pin );
+      return Atm_button::digitalRead( pin );
     case EVT_COUNTER:
       return counter_longpress.expired();
   }
@@ -84,7 +84,7 @@ void Atm_button::action( int id ) {
       onpress.push( press );
       if ( press == 1 || press == 2 ) {
         longpress[press-1].push( press );
-      } 
+      }
       return;
   }
 }
