@@ -8,12 +8,12 @@ Atm_led& Atm_led::begin( int attached_pin, bool activeLow ) {
     /* ON        */    ENT_ON, ATM_SLEEP,        -1,           -1,            -1,          -1,         -1,     -1,     OFF,  WT_START,        OFF,              OFF,    -1, // LED on
     /* START     */    ENT_ON,        -1,        -1,    BLINK_OFF,            -1,          -1,         -1,  WT_ON,     OFF,        -1,        OFF,              OFF,    -1, // Start blinking
     /* BLINK_OFF */   ENT_OFF,        -1,        -1,           -1,          LOOP,          -1,         -1,  WT_ON,     OFF,        -1,        OFF,              OFF,    -1,
-    /* LOOP      */        -1,        -1,        -1,           -1,            -1,          -1,       DONE,  WT_ON,     OFF,        -1,        OFF,              OFF, START,    
+    /* LOOP      */        -1,        -1,        -1,           -1,            -1,          -1,       DONE,  WT_ON,     OFF,        -1,        OFF,              OFF, START,
     /* DONE      */        -1,        -1, EXT_CHAIN,           -1,           OFF,          -1,         -1,  WT_ON,     OFF,  WT_START,        OFF,              OFF,    -1, // Wait after last blink
     /* OFF       */   ENT_OFF,        -1,        -1,           -1,            -1,          -1,         -1,  WT_ON,     OFF,  WT_START,         -1,               -1,  IDLE, // All off -> IDLE
     /* WT_ON     */        -1,        -1,        -1,           -1,            -1,          ON,         -1,  WT_ON,     OFF,  WT_START,         -1,               -1,    -1, // LEAD for ON
     /* WT_START  */        -1,        -1,        -1,           -1,            -1,       START,         -1,  WT_ON,     OFF,  WT_START,         -1,               -1,    -1, // LEAD for BLINK
-  }; 
+  };
   // clang-format on
   Machine::begin( state_table, ELSE );
   pin = attached_pin;
@@ -22,8 +22,8 @@ Atm_led& Atm_led::begin( int attached_pin, bool activeLow ) {
   toLow = 0;
   toHigh = 255;
   wrap = false;
-  pinMode( pin, OUTPUT );
-  digitalWrite( pin, activeLow ? HIGH : LOW );
+  Machine::pinMode( pin, OUTPUT );
+  Machine::digitalWrite( pin, activeLow ? HIGH : LOW );
   on_timer.set( 500 );
   off_timer.set( 500 );
   pwm( 512, 1 );
@@ -36,7 +36,7 @@ Atm_led& Atm_led::begin( int attached_pin, bool activeLow ) {
 
 Atm_led& Atm_led::pwm( uint16_t width, float freq ) {
 
-    if ( freq > -1 ) {	
+    if ( freq > -1 ) {
 		this->freq = freq;
 	} else {
 		freq = this->freq;
@@ -79,12 +79,12 @@ void Atm_led::action( int id ) {
     case ENT_ON:
       if ( on_timer.value > 0 ) { // Never turn if on_timer is zero (duty cycle 0 must be dark)
         if ( activeLow ) {
-          digitalWrite( pin, LOW );
+          Machine::digitalWrite( pin, LOW );
         } else {
           if ( level == toHigh ) {
-            digitalWrite( pin, HIGH );
+            Machine::digitalWrite( pin, HIGH );
           } else {
-            analogWrite( pin, mapLevel( level ) );
+            Machine::analogWrite( pin, mapLevel( level ) );
           }
         }
       }
@@ -92,12 +92,12 @@ void Atm_led::action( int id ) {
     case ENT_OFF:
       counter.decrement();
       if ( !activeLow ) {
-        digitalWrite( pin, LOW );
+        Machine::digitalWrite( pin, LOW );
       } else {
         if ( level == toHigh ) {
-          digitalWrite( pin, HIGH );
+          Machine::digitalWrite( pin, HIGH );
         } else {
-          analogWrite( pin, mapLevel( level ) );
+          Machine::analogWrite( pin, mapLevel( level ) );
         }
       }
       return;
@@ -168,8 +168,8 @@ Atm_led& Atm_led::blink( void ) {
 }
 
 Atm_led& Atm_led::range( int toLow, int toHigh, bool wrap /* = false */ ) {
-  this->toLow = toLow; 
-  this->toHigh = toHigh; 
+  this->toLow = toLow;
+  this->toHigh = toHigh;
   this->wrap = wrap;
   level = toHigh;
   return *this;
@@ -194,7 +194,7 @@ Atm_led& Atm_led::fade( int fade ) {
 Atm_led& Atm_led::lead( uint32_t ms ) {
   lead_timer.set( ms );
   return *this;
-} 
+}
 
 Atm_led& Atm_led::repeat( uint16_t repeat ) {
   counter.set( repeat_count = repeat );
@@ -205,7 +205,7 @@ int Atm_led::brightness( int level /* = -1 */ ) {
   if ( level > -1 ) {
     this->level = level;
     if ( current == ON || current == START ) {
-      analogWrite( pin, mapLevel( level ) );
+      Machine::analogWrite( pin, mapLevel( level ) );
     }
   }
   return this->level;
@@ -214,9 +214,9 @@ int Atm_led::brightness( int level /* = -1 */ ) {
 int Atm_led::brighten( int v ) {
   if ( abs( v ) == 1 ) {
     int br = (int)this->level + v;
-    if ( br > toHigh ) 
+    if ( br > toHigh )
       br = wrap ? toLow : toHigh;
-    if ( br < toLow ) 
+    if ( br < toLow )
       br = wrap ? toHigh : toLow;
     brightness( br );
   }

@@ -5,6 +5,14 @@
 
 #pragma once
 
+#include <Arduino.h>
+
+#if ARDUINO_API_VERSION < 10001
+typedef uint8_t pin_size_t;
+typedef uint8_t PinMode;
+typedef uint8_t PinStatus;
+#endif
+
 class Machine {
  public:
   virtual int state( void );
@@ -37,6 +45,12 @@ class Machine {
   Stream* stream_trace;
   uint32_t cycles;
 
-  void pinMode(uint8_t pin, PinMode mode);
-  PinStatus digitalRead(uint8_t pin);
+  void pinMode(pin_size_t pin, PinMode mode);
+  PinStatus digitalRead(pin_size_t pin);
+  void digitalWrite(pin_size_t pin, PinStatus status);
+  #if ARDUINO_API_VERSION > 10000
+  inline void digitalWrite(pin_size_t pin, bool status);
+  #endif
+  void analogWrite(pin_size_t pinNumber, int value);
+
 };

@@ -18,10 +18,10 @@ Atm_encoder& Atm_encoder::begin( int pin1, int pin2, int divider /* = 1 */ ) {
   this->pin1 = pin1;
   this->pin2 = pin2;
   this->divider = divider;
-  pinMode( pin1, INPUT );
-  pinMode( pin2, INPUT );
-  digitalWrite( pin1, HIGH );
-  digitalWrite( pin2, HIGH );
+  Machine::pinMode( pin1, INPUT );
+  Machine::pinMode( pin2, INPUT );
+  Machine::digitalWrite( pin1, HIGH );
+  Machine::digitalWrite( pin2, HIGH );
   min = INT_MIN;
   max = INT_MAX;
   value = 0;
@@ -41,7 +41,7 @@ int Atm_encoder::event( int id ) {
 void Atm_encoder::action( int id ) {
   switch ( id ) {
     case LP_IDLE:
-      enc_bits = ( ( enc_bits << 2 ) | ( digitalRead( pin1 ) << 1 ) | ( digitalRead( pin2 ) ) ) & 0x0f;
+      enc_bits = ( ( enc_bits << 2 ) | ( Machine::digitalRead( pin1 ) << 1 ) | ( Machine::digitalRead( pin2 ) ) ) & 0x0f;
       enc_direction = enc_states[enc_bits];
       if ( enc_direction != 0 ) {
         enc_counter = enc_counter + enc_direction;

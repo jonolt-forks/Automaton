@@ -254,10 +254,22 @@ Machine& Machine::cycle( uint32_t time /* = 0 */ ) {
   return *this;
 }
 
-void Machine::pinMode(uint8_t pin, PinMode mode){
+void Machine::pinMode(pin_size_t pin, PinMode mode){
     pinMode(pin, mode);
 }
 
-PinStatus Machine::digitalRead(uint8_t pin){
+PinStatus Machine::digitalRead(pin_size_t pin){
     return digitalRead(pin);
+}
+
+void Machine::digitalWrite(pin_size_t pin, PinStatus status){
+    digitalWrite(pin, status);
+}
+
+//inline void Machine::digitalWrite(pin_size_t pin, bool status){
+//    Machine::digitalWrite(pin, (PinStatus)status);
+//}
+
+void Machine::analogWrite(pin_size_t pinNumber, int value){
+    analogWrite(pinNumber, value);
 }
